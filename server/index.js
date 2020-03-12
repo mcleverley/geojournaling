@@ -3,6 +3,9 @@ const express = require('express');
 const morgan = require('morgan');
 const PORT = process.env.PORT || 8080;
 const app = express();
+const db = require('./db/index.js');
+
+const syncDb = () => db.sync({ force: true });
 
 const createApp = () => {
   // logging middleware
@@ -35,5 +38,10 @@ const startListening = () => {
   );
 };
 
-startListening();
-createApp();
+const boot = async () => {
+  await syncDb();
+  await startListening();
+  await createApp();
+};
+
+boot();
